@@ -6,7 +6,7 @@ ifeq ($(UNAME), Darwin)  # Mac
   PDNATIVE_SOLIB_EXT = jnilib
   PDNATIVE_PLATFORM = mac
   PDNATIVE_ARCH = 
-  PLATFORM_CFLAGS = -DHAVE_LIBDL -arch x86_64 -arch i386 -g \
+  PLATFORM_CFLAGS = -DHAVE_LIBDL -DHAVE_ALLOCA_H -arch x86_64 -arch i386 -g \
     -I/System/Library/Frameworks/JavaVM.framework/Headers
   LDFLAGS = -arch x86_64 -arch i386 -dynamiclib -ldl
   CSHARP_LDFLAGS = $(LDFLAGS)
@@ -54,8 +54,8 @@ PD_FILES = \
 	pure-data/src/d_misc.c pure-data/src/d_osc.c pure-data/src/d_resample.c \
 	pure-data/src/d_soundfile.c pure-data/src/d_ugen.c \
 	pure-data/src/g_all_guis.c pure-data/src/g_array.c pure-data/src/g_bang.c \
-	pure-data/src/g_canvas.c pure-data/src/g_editor.c pure-data/src/g_graph.c \
-	pure-data/src/g_guiconnect.c pure-data/src/g_hdial.c \
+	pure-data/src/g_canvas.c pure-data/src/g_clone.c pure-data/src/g_editor.c \
+	pure-data/src/g_graph.c pure-data/src/g_guiconnect.c pure-data/src/g_hdial.c \
 	pure-data/src/g_hslider.c pure-data/src/g_io.c pure-data/src/g_mycanvas.c \
 	pure-data/src/g_numbox.c pure-data/src/g_readwrite.c \
 	pure-data/src/g_rtext.c pure-data/src/g_scalar.c pure-data/src/g_template.c \
@@ -72,13 +72,13 @@ PD_FILES = \
 	pure-data/src/x_gui.c pure-data/src/x_interface.c pure-data/src/x_list.c \
 	pure-data/src/x_midi.c pure-data/src/x_misc.c pure-data/src/x_net.c \
 	pure-data/src/x_scalar.c pure-data/src/x_text.c pure-data/src/x_time.c \
+	pure-data/src/x_vexp.c pure-data/src/x_vexp_if.c pure-data/src/x_vexp_fun.c \
 	libpd_wrapper/s_libpdmidi.c libpd_wrapper/x_libpdreceive.c \
 	libpd_wrapper/z_hooks.c libpd_wrapper/z_libpd.c
 
 PD_EXTRA_FILES = \
 	pure-data/extra/bob~/bob~.c pure-data/extra/bonk~/bonk~.c \
-	pure-data/extra/choice/choice.c pure-data/extra/expr~/vexp_fun.c \
-	pure-data/extra/expr~/vexp_if.c pure-data/extra/expr~/vexp.c \
+	pure-data/extra/choice/choice.c \
 	pure-data/extra/fiddle~/fiddle~.c pure-data/extra/loop~/loop~.c \
 	pure-data/extra/lrshift~/lrshift~.c pure-data/extra/pique/pique.c \
 	pure-data/extra/sigmund~/sigmund~.c pure-data/extra/stdout/stdout.c
@@ -110,7 +110,7 @@ endif
 # conditional pure-data/extra externals compilation
 ifeq ($(EXTRA), true)
 	EXTRA_FILES = $(PD_EXTRA_FILES)
-	EXTRA_CFLAGS = -I./pure-data/extra/expr~ -DLIBPD_EXTRA
+	EXTRA_CFLAGS = -DLIBPD_EXTRA
 endif
 
 # conditional optimizations or debug settings
@@ -174,12 +174,13 @@ $(PDCSHARP): ${PD_FILES:.c=.o} ${EXTRA_FILES:.c=.o}
 
 cpplib: $(PDCPP)
 
-$(PDCPP): ${PD_FILES:.c=.o} ${UTIL_FILES:.c=.o} ${EXTRA_FILES:.c=.o} ${CPP_FILES:.cpp=.o} 
+# build with LIBPD_UTILS since cpp wrapper uses the ringbuffer
+$(PDCPP): ${PD_FILES:.c=.o} ${LIBPD_UTILS:.c=.o} ${EXTRA_FILES:.c=.o} ${CPP_FILES:.cpp=.o} 
 	g++ -o $(PDCPP) $^ $(CPP_LDFLAGS) -lm -lpthread
 
 clean:
 	rm -f ${PD_FILES:.c=.o} ${PD_EXTRA_OBJS} ${CPP_FILES:.cpp=.o} ${JNI_FILE:.c=.o}
-	rm -f ${UTIL_FILES:.c=.o} ${EXTRA_FILES:.c=.o}
+	rm -f ${PD_UTIL_FILES:.c=.o} ${PD_EXTRA_FILES:.c=.o}
 
 clobber: clean
 	rm -f $(LIBPD) $(PDCSHARP) $(PDCPP) $(PDJAVA_NATIVE) $(PDJAVA_JAR)

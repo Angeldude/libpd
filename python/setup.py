@@ -18,8 +18,7 @@ setup(name='pypdlib',
                   ],
                   include_dirs = [
                     '../libpd_wrapper',
-                    '../pure-data/src',
-                    '../pure-data/extra/expr~'
+                    '../pure-data/src'
                   ],
                   libraries = [
                     'm',
@@ -51,6 +50,7 @@ setup(name='pypdlib',
                     '../pure-data/src/g_array.c',
                     '../pure-data/src/g_bang.c',
                     '../pure-data/src/g_canvas.c',
+                    '../pure-data/src/g_clone.c',
                     '../pure-data/src/g_editor.c',
                     '../pure-data/src/g_graph.c',
                     '../pure-data/src/g_guiconnect.c',
@@ -100,12 +100,12 @@ setup(name='pypdlib',
                     '../pure-data/src/x_scalar.c',
                     '../pure-data/src/x_text.c',
                     '../pure-data/src/x_time.c',
+                    '../pure-data/src/x_vexp.c',
+                    '../pure-data/src/x_vexp_if.c',
+                    '../pure-data/src/x_vexp_fun.c',
                     '../pure-data/extra/bob~/bob~.c',
                     '../pure-data/extra/bonk~/bonk~.c', \
                     '../pure-data/extra/choice/choice.c', \
-                    '../pure-data/extra/expr~/vexp_fun.c', \
-                    '../pure-data/extra/expr~/vexp_if.c', \
-                    '../pure-data/extra/expr~/vexp.c', \
                     '../pure-data/extra/fiddle~/fiddle~.c', \
                     '../pure-data/extra/loop~/loop~.c', \
                     '../pure-data/extra/lrshift~/lrshift~.c', \
